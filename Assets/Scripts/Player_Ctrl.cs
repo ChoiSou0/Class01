@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class Player_Ctrl : MonoBehaviour
 {
+    Animator animator;
+    SpriteRenderer spriteRenderer;
     Rigidbody2D rb;
     public int Player_Speed;
     public int Jump_Power;
     public int Jump_cnt;
-    bool isGround;
-    [SerializeField] Transform Feet;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -26,19 +28,30 @@ public class Player_Ctrl : MonoBehaviour
 
     private void Move()
     {
-        float xSpeed = Input.GetAxis("Horizontal");
-        Vector2 Ver = transform.position;
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            transform.Translate(Vector2.left * Player_Speed * Time.deltaTime);
+            spriteRenderer.flipX = false;
+            animator.SetBool("isWalk", true);
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            transform.Translate(Vector2.right * Player_Speed * Time.deltaTime);
+            spriteRenderer.flipX = true;
+            animator.SetBool("isWalk", true);
+        }
+        else
+        {
+            animator.SetBool("isWalk", false);
+        }
 
-        Ver.x += xSpeed * Player_Speed * Time.deltaTime;
-
-        transform.position = Ver;
     }
 
     private void Jump()
     {
-        isGround = Physics2D.OverlapCircle(Feet.position, 0.2f, LayerMask.GetMask("Ground")).CompareTag("Ground");
+        //isGround = Physics2D.OverlapCircle(Feet.position, 0.2f, LayerMask.GetMask("Ground")).CompareTag("Ground");
 
-        if (Input.GetKeyDown(KeyCode.Space) && Jump_cnt > 0 && isGround)
+        if (Input.GetKeyDown(KeyCode.Space) && Jump_cnt > 0)
         {
             rb.AddForce(Vector2.up * Jump_Power, ForceMode2D.Impulse);
             Jump_cnt--;
