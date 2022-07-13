@@ -11,6 +11,8 @@ public class Player_Ctrl : MonoBehaviour
     public int Jump_Power;
     public int Jump_cnt;
 
+    public GameObject ATKObj;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +26,7 @@ public class Player_Ctrl : MonoBehaviour
     {
         Move();
         Jump();
+        Attack();
     }
 
     private void Move()
@@ -55,6 +58,31 @@ public class Player_Ctrl : MonoBehaviour
         {
             rb.AddForce(Vector2.up * Jump_Power, ForceMode2D.Impulse);
             Jump_cnt--;
+        }
+
+    }
+
+    private void Attack()
+    {
+        Vector2 Pos = new Vector2(0, 0);
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            animator.Play("Player_ATK");
+
+            if (spriteRenderer.flipX)
+            {
+                Pos = new Vector2(transform.position.x + 1, transform.position.y - 1);
+                var ATK = Instantiate(ATKObj, Pos, Quaternion.identity);
+                Destroy(ATK, 0.1f);
+            }
+            else if (!spriteRenderer.flipX)
+            {
+                Pos = new Vector2(transform.position.x - 1, transform.position.y - 1);
+                var ATK = Instantiate(ATKObj, Pos, Quaternion.identity);
+                Destroy(ATK, 0.1f);
+            }
+
         }
 
     }
